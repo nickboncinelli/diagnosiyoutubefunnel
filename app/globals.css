@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050505;
+  --foreground: #e6e6e6;
+  --accent: #FF0000;
+  --success: #22C55E;
+  --warning: #EAB308;
+  --danger: #EF4444;
+  --gray-light: #141414;
+  --gray: #888888;
+  --card: #0e0e0e;
+  --border: #222222;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-gray-light: var(--gray-light);
+  --color-gray: var(--gray);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #050505 !important;
+  color: #e6e6e6 !important;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+html {
+  background: #050505 !important;
+}
+
+/* Smooth transitions for quiz steps */
+.step-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.step-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+.step-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.step-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  from { width: 0; }
+}
+.progress-animated {
+  animation: progress-fill 0.5s ease-out;
+}
+
+/* Pulse animation for loading */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Score number animation */
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-score {
+  animation: count-up 0.6s ease-out;
+}
+
+/* Hide scrollbar like backstagelab.co */
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

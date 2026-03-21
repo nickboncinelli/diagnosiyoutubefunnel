@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Circle -->
+  <circle cx="25" cy="22" r="12" fill="#0A0A0A"/>
+  <!-- Play triangle (red) -->
+  <polygon points="42,10 42,34 58,22" fill="#FF0000"/>
+  <!-- Text "backstage" -->
+  <text x="8" y="55" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" font-weight="600" fill="#0A0A0A">backstage</text>
+</svg>
