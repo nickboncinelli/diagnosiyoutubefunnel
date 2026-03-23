@@ -15,14 +15,21 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "YouTube Funnel Score | Backstage Agency",
+  title: "Diagnosi YouTube | Backstage Agency",
   description:
-    "Quanto vende il tuo funnel YouTube? Diagnosi completa del tuo canale + valutazione del tuo processo di acquisizione clienti. Scoprilo in 3 minuti.",
+    "Scopri quanto vende il tuo funnel YouTube in 3 minuti. Diagnosi completa del tuo canale + consigli pratici per ottenere più clienti.",
   openGraph: {
-    title: "YouTube Funnel Score | Backstage Agency",
+    title: "Diagnosi YouTube | Backstage Agency",
     description:
-      "Diagnosi completa del tuo canale YouTube + valutazione del tuo funnel di vendita B2B.",
+      "Scopri quanto vende il tuo funnel YouTube in 3 minuti. Diagnosi completa + consigli pratici.",
     type: "website",
+    siteName: "Backstage Agency",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Diagnosi YouTube | Backstage Agency",
+    description:
+      "Scopri quanto vende il tuo funnel YouTube in 3 minuti. Diagnosi completa + consigli pratici.",
   },
 };
 
