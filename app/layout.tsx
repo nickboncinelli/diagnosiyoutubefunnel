@@ -24,12 +24,21 @@ export const metadata: Metadata = {
       "Scopri quanto vende il tuo funnel YouTube in 3 minuti. Diagnosi completa + consigli pratici.",
     type: "website",
     siteName: "Backstage Agency",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 1200,
+        alt: "Backstage Agency Logo",
+      },
+    ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Diagnosi YouTube | Backstage Agency",
     description:
       "Scopri quanto vende il tuo funnel YouTube in 3 minuti. Diagnosi completa + consigli pratici.",
+    images: ["/og-image.png"],
   },
 };
 
