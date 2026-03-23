@@ -53,23 +53,37 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="flex-1 flex items-center justify-center px-6 py-12 md:py-20">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent text-sm font-medium px-4 py-1.5 rounded-full mb-8 border border-accent/20">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" />
-            </svg>
-            Diagnosi gratuita in 3 minuti
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4 tracking-tight">
             Quanto vende il tuo
             <br />
             <span className="text-accent">funnel YouTube?</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray max-w-xl mx-auto mb-10 leading-relaxed">
-            Diagnosi completa del tuo canale + audit SEO + valutazione del tuo
-            processo di acquisizione clienti. Scopri dove stai perdendo potenziali clienti.
+          <p className="text-lg md:text-xl text-gray max-w-xl mx-auto mb-12 leading-relaxed">
+            Ricevi una diagnosi completa del tuo canale con problemi, punti di forza e consigli pratici pronti da applicare.
           </p>
+
+          {/* 3 Steps */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 max-w-2xl mx-auto">
+            <div className="bg-card border border-border rounded-2xl p-6 text-center">
+              <div className="text-4xl font-bold text-accent mb-3">1</div>
+              <p className="text-sm leading-snug">
+                Incolla il link del tuo canale YouTube
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-2xl p-6 text-center">
+              <div className="text-4xl font-bold text-accent mb-3">2</div>
+              <p className="text-sm leading-snug">
+                Ricevi la diagnosi con consigli pratici via email
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-2xl p-6 text-center">
+              <div className="text-4xl font-bold text-accent mb-3">3</div>
+              <p className="text-sm leading-snug">
+                Applica i consigli e ottieni più clienti
+              </p>
+            </div>
+          </div>
 
           {/* URL Input */}
           <form onSubmit={handleSubmit} className="max-w-xl mx-auto">
@@ -97,7 +111,7 @@ export default function LandingPage() {
                 />
               </div>
               <Button type="submit" size="lg">
-                Analizza il mio canale
+                Inizia la diagnosi
               </Button>
             </div>
             {error && (
@@ -108,6 +122,41 @@ export default function LandingPage() {
           <p className="text-xs text-gray/60 mt-4">
             Supporta: youtube.com/@handle, youtube.com/channel/..., youtube.com/c/...
           </p>
+
+          {/* What you'll discover */}
+          <div className="mt-16 max-w-lg mx-auto text-left">
+            <h3 className="text-lg font-bold mb-4 text-center">
+              <span className="text-accent">Entro 3 minuti</span> scoprirai:
+            </h3>
+            <div className="space-y-3">
+              {[
+                "Il punteggio del tuo funnel YouTube (da 0 a 100)",
+                "Quanto è ottimizzata la SEO dei tuoi video",
+                "Azioni concrete da applicare già dal prossimo video",
+                "Dove stai perdendo potenziali clienti nel tuo processo",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="flex-shrink-0 mt-0.5"
+                  >
+                    <circle cx="12" cy="12" r="10" fill="#FF0000" opacity="0.15" />
+                    <path
+                      d="M8 12l2.5 2.5L16 9"
+                      stroke="#FF0000"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="text-sm text-foreground/80">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Social proof */}
           <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-gray/50">

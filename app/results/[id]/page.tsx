@@ -178,11 +178,11 @@ function ResultsContent() {
             rel="noopener noreferrer"
           >
             <Button variant="primary" size="lg">
-              Prenota una call per il report avanzato
+              Prenota una call per la diagnosi avanzata
             </Button>
           </a>
           <p className="text-gray/50 text-xs mt-4">
-            Nella call analizzeremo insieme i tuoi dati Analytics per un report personalizzato al 100%
+            Un nostro consulente analizzerà i tuoi dati analytics per darti consigli personalizzati al 100%
           </p>
         </div>
 

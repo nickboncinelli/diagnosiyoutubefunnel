@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ProgressBar from "@/components/ui/ProgressBar";
@@ -8,13 +8,15 @@ import ScoreBadge from "@/components/ui/ScoreBadge";
 import { quizQuestions, sectionLabels } from "@/lib/quiz-data";
 import { YouTubeAnalysis, QuizAnswers, LeadInfo, FunnelScore } from "@/types";
 
-type Step = "analyzing" | "preview" | "lead_capture" | "quiz" | "calculating";
+// Flow: analyzing → preview → quiz → lead_capture → calculating → results
+type Step = "analyzing" | "preview" | "quiz" | "lead_capture" | "calculating";
 
 const loadingMessages = [
   "Sto analizzando il tuo canale...",
   "Scarico i dati degli ultimi video...",
   "Analizzo la SEO dei titoli e descrizioni...",
   "Calcolo le metriche di performance...",
+  "Verifico la frequenza di pubblicazione...",
   "Quasi fatto...",
 ];
 
@@ -39,12 +41,15 @@ function QuizContent() {
   });
   const [leadErrors, setLeadErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const analyzeStartTime = useRef<number>(0);
 
   const analyzeChannel = useCallback(async () => {
     if (!channelUrl) {
       setError("URL del canale mancante");
       return;
     }
+
+    analyzeStartTime.current = Date.now();
 
     try {
       const res = await fetch("/api/youtube/analyze", {
@@ -57,6 +62,13 @@ function QuizContent() {
 
       if (!res.ok) {
         throw new Error(data.error || "Errore durante la diagnosi");
+      }
+
+      // Ensure minimum 8 seconds of loading for perceived thoroughness
+      const elapsed = Date.now() - analyzeStartTime.current;
+      const minDelay = 8000;
+      if (elapsed < minDelay) {
+        await new Promise((r) => setTimeout(r, minDelay - elapsed));
       }
 
       setYouTube(data);
@@ -76,7 +88,7 @@ function QuizContent() {
     if (step !== "analyzing") return;
     const interval = setInterval(() => {
       setLoadingMsgIndex((i) => (i + 1) % loadingMessages.length);
-    }, 2500);
+    }, 2000);
     return () => clearInterval(interval);
   }, [step]);
 
@@ -91,7 +103,8 @@ function QuizContent() {
       if (currentQ < quizQuestions.length - 1) {
         setCurrentQ((i) => i + 1);
       } else {
-        handleComplete({ ...quizAnswers, [questionId]: value });
+        // Quiz finished → go to lead capture
+        setStep("lead_capture");
       }
     }, 300);
   };
@@ -111,13 +124,16 @@ function QuizContent() {
   const handleLeadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateLead()) {
-      setStep("quiz");
+      // After lead capture, calculate score
+      handleComplete(quizAnswers);
     }
   };
 
   const handleComplete = async (finalAnswers: QuizAnswers) => {
     setStep("calculating");
     setSubmitting(true);
+
+    const calcStart = Date.now();
 
     try {
       const res = await fetch("/api/score/calculate", {
@@ -143,6 +159,7 @@ function QuizContent() {
         score: data.score as FunnelScore,
       };
 
+      // Send email in background
       fetch("/api/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -151,6 +168,13 @@ function QuizContent() {
 
       // Store data in sessionStorage to avoid URL too long (HTTP 431)
       sessionStorage.setItem(`result-${data.id}`, JSON.stringify(result));
+
+      // Ensure minimum 10 seconds of "calculating" for perceived depth
+      const elapsed = Date.now() - calcStart;
+      const minDelay = 10000;
+      if (elapsed < minDelay) {
+        await new Promise((r) => setTimeout(r, minDelay - elapsed));
+      }
 
       router.push(`/results/${data.id}`);
     } catch (err) {
@@ -184,20 +208,46 @@ function QuizContent() {
   // --- ANALYZING STATE ---
   if (step === "analyzing") {
     return (
-      <div className="flex-1 flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"
-                fill="#FF0000"
-              />
-              <polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="white" />
-            </svg>
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="max-w-lg w-full text-center">
+          <h1 className="text-4xl md:text-5xl font-black uppercase leading-none mb-2 tracking-tight">
+            Diagnosi
+          </h1>
+          <h1 className="text-4xl md:text-5xl font-black uppercase leading-none mb-4 tracking-tight">
+            in corso
+          </h1>
+          <div className="w-16 h-1 bg-accent mx-auto mb-10" />
+
+          <div className="bg-card border border-border rounded-2xl p-8 text-left mb-8">
+            <p className="text-base font-bold text-center mb-6">
+              Stiamo analizzando il tuo canale e verificando oltre 15 criteri di performance e conversione.
+            </p>
+
+            <p className="text-sm mb-4">
+              <span className="font-bold">Entro 3 minuti</span> scoprirai:
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {[
+                "Il punteggio del tuo funnel (da 0 a 100)",
+                "Punti di forza da sfruttare e problemi da risolvere",
+                "Audit SEO dei tuoi titoli e descrizioni",
+                "Azioni concrete da applicare subito",
+                "Dove stai perdendo potenziali clienti",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10" fill="#FF0000" opacity="0.15" />
+                    <path d="M8 12l2.5 2.5L16 9" stroke="#FF0000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="text-sm text-foreground/80">{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <h2 className="text-xl font-bold mb-2">Diagnosi in corso</h2>
-          <p className="text-gray mb-8">{loadingMessages[loadingMsgIndex]}</p>
-          <div className="w-full h-2 bg-foreground/10 rounded-full overflow-hidden">
+
+          <p className="text-gray text-sm mb-3">{loadingMessages[loadingMsgIndex]}</p>
+          <div className="w-full h-2 bg-foreground/10 rounded-full overflow-hidden max-w-xs mx-auto">
             <div className="h-full bg-accent rounded-full animate-pulse-slow" style={{ width: "60%" }} />
           </div>
         </div>
@@ -270,11 +320,11 @@ function QuizContent() {
             </div>
 
             <Button
-              onClick={() => setStep("lead_capture")}
+              onClick={() => setStep("quiz")}
               className="w-full"
               size="lg"
             >
-              Continua per la diagnosi completa
+              Continua con la diagnosi
             </Button>
           </div>
         </div>
@@ -282,7 +332,60 @@ function QuizContent() {
     );
   }
 
-  // --- LEAD CAPTURE ---
+  // --- QUIZ ---
+  if (step === "quiz") {
+    const question = quizQuestions[currentQ];
+
+    return (
+      <div className="flex-1 flex flex-col px-6 py-8">
+        <div className="max-w-lg mx-auto w-full flex-1 flex flex-col">
+          <ProgressBar current={currentQ + 1} total={quizQuestions.length} />
+
+          <div className="flex-1 flex flex-col justify-center py-8">
+            {showSectionHeader && (
+              <div className="text-xs font-semibold text-accent uppercase tracking-wider mb-4">
+                {sectionLabels[question.section]}
+              </div>
+            )}
+
+            <h2 className="text-xl md:text-2xl font-bold mb-8 leading-snug">
+              {question.question}
+            </h2>
+
+            <div className="space-y-3">
+              {question.options.map((option) => {
+                const isSelected = quizAnswers[question.id] === option.value;
+                return (
+                  <button
+                    key={option.label}
+                    onClick={() => handleAnswer(question.id, option.value)}
+                    className={`w-full text-left px-5 py-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+                      isSelected
+                        ? "border-accent bg-accent/10 text-foreground"
+                        : "border-border hover:border-accent/50 text-foreground/80"
+                    }`}
+                  >
+                    <span className="text-base">{option.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {currentQ > 0 && (
+            <button
+              onClick={() => setCurrentQ((i) => i - 1)}
+              className="text-sm text-gray hover:text-foreground transition-colors cursor-pointer"
+            >
+              Domanda precedente
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- LEAD CAPTURE (after quiz, before results) ---
   if (step === "lead_capture") {
     return (
       <div className="flex-1 flex items-center justify-center px-6 py-12">
@@ -292,7 +395,7 @@ function QuizContent() {
               Ci siamo quasi!
             </h2>
             <p className="text-gray">
-              Per proseguire con la diagnosi completa e ricevere il report
+              Per ricevere la diagnosi completa e il report
               dettagliato via email, inserisci i tuoi dati.
             </p>
           </div>
@@ -406,7 +509,7 @@ function QuizContent() {
             )}
 
             <Button type="submit" className="w-full" size="lg">
-              Inizia la diagnosi del funnel
+              Ricevi la diagnosi completa
             </Button>
           </form>
         </div>
@@ -414,71 +517,62 @@ function QuizContent() {
     );
   }
 
-  // --- QUIZ ---
-  if (step === "quiz") {
-    const question = quizQuestions[currentQ];
-
-    return (
-      <div className="flex-1 flex flex-col px-6 py-8">
-        <div className="max-w-lg mx-auto w-full flex-1 flex flex-col">
-          <ProgressBar current={currentQ + 1} total={quizQuestions.length} />
-
-          <div className="flex-1 flex flex-col justify-center py-8">
-            {showSectionHeader && (
-              <div className="text-xs font-semibold text-accent uppercase tracking-wider mb-4">
-                {sectionLabels[question.section]}
-              </div>
-            )}
-
-            <h2 className="text-xl md:text-2xl font-bold mb-8 leading-snug">
-              {question.question}
-            </h2>
-
-            <div className="space-y-3">
-              {question.options.map((option) => {
-                const isSelected = quizAnswers[question.id] === option.value;
-                return (
-                  <button
-                    key={option.label}
-                    onClick={() => handleAnswer(question.id, option.value)}
-                    className={`w-full text-left px-5 py-4 rounded-xl border transition-all duration-200 cursor-pointer ${
-                      isSelected
-                        ? "border-accent bg-accent/10 text-foreground"
-                        : "border-border hover:border-accent/50 text-foreground/80"
-                    }`}
-                  >
-                    <span className="text-base">{option.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {currentQ > 0 && (
-            <button
-              onClick={() => setCurrentQ((i) => i - 1)}
-              className="text-sm text-gray hover:text-foreground transition-colors cursor-pointer"
-            >
-              Domanda precedente
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // --- CALCULATING ---
+  // --- CALCULATING (with 10s minimum delay) ---
   if (step === "calculating") {
     return (
-      <div className="flex-1 flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="#FF0000" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="max-w-lg w-full text-center">
+          <h1 className="text-4xl md:text-5xl font-black uppercase leading-none mb-2 tracking-tight">
+            Diagnosi
+          </h1>
+          <h1 className="text-4xl md:text-5xl font-black uppercase leading-none mb-4 tracking-tight">
+            in corso
+          </h1>
+          <div className="w-16 h-1 bg-accent mx-auto mb-10" />
+
+          <div className="bg-card border border-border rounded-2xl p-8 text-left">
+            <p className="text-base font-bold text-center mb-6">
+              Stiamo calcolando il punteggio del tuo funnel e generando il report personalizzato.
+            </p>
+
+            <p className="text-sm mb-4">
+              <span className="font-bold">Entro pochi secondi</span> scoprirai:
+            </p>
+
+            <div className="space-y-3 mb-8">
+              {[
+                "Il punteggio totale del tuo funnel YouTube",
+                "Il dettaglio per Attrazione, Fidelizzazione e Conversione",
+                "I problemi principali e come risolverli",
+                "Azioni pratiche da implementare subito",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <circle cx="12" cy="12" r="10" fill="#FF0000" opacity="0.15" />
+                    <path d="M8 12l2.5 2.5L16 9" stroke="#FF0000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="text-sm text-foreground/80">{item}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Email confirmation */}
+            {lead.email && (
+              <div className="bg-foreground/5 rounded-xl p-4 flex items-center gap-3">
+                <span className="text-lg">&#9993;</span>
+                <div>
+                  <p className="text-xs text-gray">Il report PDF sarà inviato a:</p>
+                  <p className="text-sm font-bold">{lead.email}</p>
+                </div>
+              </div>
+            )}
           </div>
-          <h2 className="text-xl font-bold mb-2">Calcolo il tuo punteggio...</h2>
-          <p className="text-gray">Sto generando il report personalizzato</p>
+
+          <div className="mt-6">
+            <div className="w-full h-2 bg-foreground/10 rounded-full overflow-hidden max-w-xs mx-auto">
+              <div className="h-full bg-accent rounded-full animate-pulse-slow" style={{ width: "80%" }} />
+            </div>
+          </div>
         </div>
       </div>
     );

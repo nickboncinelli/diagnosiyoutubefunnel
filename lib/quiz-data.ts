@@ -3,47 +3,36 @@ import { QuizQuestion } from "@/types";
 export const quizQuestions: QuizQuestion[] = [
   // === SEZIONE A: Attrazione ===
   {
-    id: "attr_cta",
+    id: "attr_valore",
     section: "attrazione",
-    question: "Hai una call-to-action chiara nei tuoi video?",
+    question: "I tuoi video hanno valore intrinseco anche per chi non ti conosce?",
     options: [
-      { label: "Mai", value: 0 },
-      { label: "Raramente", value: 25 },
-      { label: "A volte", value: 50 },
-      { label: "Sempre, con link in descrizione", value: 100 },
-    ],
-  },
-  {
-    id: "attr_seo_titles",
-    section: "attrazione",
-    question: "Ottimizzi i titoli dei tuoi video in ottica SEO (keyword research, lunghezza, chiarezza)?",
-    options: [
-      { label: "No, scrivo quello che mi viene", value: 0 },
-      { label: "A volte uso qualche keyword", value: 33 },
-      { label: "Faccio keyword research per ogni video", value: 75 },
-      { label: "Ho un processo SEO strutturato (keyword + analisi competitor)", value: 100 },
-    ],
-  },
-  {
-    id: "attr_seo_descriptions",
-    section: "attrazione",
-    question: "Come gestisci le descrizioni dei tuoi video?",
-    options: [
-      { label: "Le lascio vuote o scrivo pochissimo", value: 0 },
-      { label: "Scrivo qualche riga generica", value: 25 },
-      { label: "Descrizione completa con link e keyword", value: 70 },
-      { label: "Descrizione ottimizzata SEO + timestamp + link + CTA", value: 100 },
+      { label: "No, sono pensati solo per chi mi segue già", value: 0 },
+      { label: "Alcuni sì, ma non tutti", value: 33 },
+      { label: "Sì, cerco sempre di dare valore a chiunque", value: 70 },
+      { label: "Sì, ogni video è pensato per essere utile anche a chi mi scopre per la prima volta", value: 100 },
     ],
   },
   {
     id: "attr_thumbnails",
     section: "attrazione",
-    question: "Come crei le thumbnail dei tuoi video?",
+    question: "Come crei le copertine dei tuoi video?",
     options: [
-      { label: "Uso quelle generate da YouTube", value: 0 },
+      { label: "Uso quelle generate automaticamente da YouTube", value: 0 },
       { label: "Le creo ma senza un metodo preciso", value: 30 },
       { label: "Design curato e coerente con il brand", value: 70 },
-      { label: "A/B test delle thumbnail + analisi CTR", value: 100 },
+      { label: "A/B test delle copertine + analisi CTR", value: 100 },
+    ],
+  },
+  {
+    id: "attr_seo_titles",
+    section: "attrazione",
+    question: "Ottimizzi i titoli dei tuoi video in ottica SEO?",
+    options: [
+      { label: "No, scrivo quello che mi viene", value: 0 },
+      { label: "A volte uso qualche keyword", value: 33 },
+      { label: "Faccio keyword research per ogni video", value: 75 },
+      { label: "Ho un processo SEO strutturato (keyword + analisi competitor)", value: 100 },
     ],
   },
   {
@@ -57,11 +46,113 @@ export const quizQuestions: QuizQuestion[] = [
       { label: "2+ volte a settimana con piano editoriale", value: 100 },
     ],
   },
+  {
+    id: "attr_script",
+    section: "attrazione",
+    question: "Ti impegni nella redazione dello script dei tuoi video?",
+    options: [
+      { label: "No, improvviso davanti alla camera", value: 0 },
+      { label: "No, uso l'AI per tutto", value: 15 },
+      { label: "Faccio una scaletta di massima", value: 50 },
+      { label: "Scrivo uno script strutturato con hook, corpo e CTA", value: 100 },
+    ],
+  },
 
   // === SEZIONE B: Fidelizzazione ===
   {
-    id: "fid_email_sequence",
+    id: "fid_correlati",
     section: "fidelizzazione",
+    question: "I tuoi video sono godibili uno dopo l'altro?",
+    options: [
+      { label: "No, i miei video sono molto eterogenei", value: 0 },
+      { label: "Parzialmente, ma non c'è una logica precisa", value: 33 },
+      { label: "Sì, cerco di creare una progressione tra i video", value: 70 },
+      { label: "Sì, ho playlist tematiche e un percorso chiaro per lo spettatore", value: 100 },
+    ],
+  },
+  {
+    id: "fid_linking",
+    section: "fidelizzazione",
+    question: "Indirizzi sempre gli spettatori da un video all'altro quando possibile?",
+    options: [
+      { label: "Mai o quasi mai", value: 0 },
+      { label: "A volte, quando mi ricordo", value: 30 },
+      { label: "Spesso, uso schede e schermate finali", value: 70 },
+      { label: "Sempre, con riferimenti vocali + schede + schermate finali + link in descrizione", value: 100 },
+    ],
+  },
+  {
+    id: "fid_editing",
+    section: "fidelizzazione",
+    question: "Hai un supporto di editing o fai tutto da solo?",
+    options: [
+      { label: "Faccio tutto da solo, editing minimo", value: 0 },
+      { label: "Faccio tutto da solo ma curo l'editing", value: 40 },
+      { label: "Ho un editor che mi aiuta", value: 75 },
+      { label: "Ho un team dedicato (editor + grafica + post-produzione)", value: 100 },
+    ],
+  },
+  {
+    id: "fid_descrizioni",
+    section: "fidelizzazione",
+    question: "Curi bene le descrizioni dei tuoi video?",
+    options: [
+      { label: "Le lascio vuote o scrivo pochissimo", value: 0 },
+      { label: "Scrivo qualche riga generica", value: 25 },
+      { label: "Descrizione completa con link e keyword", value: 70 },
+      { label: "Descrizione ottimizzata con timestamp, link, CTA e keyword", value: 100 },
+    ],
+  },
+  {
+    id: "fid_posizionamento",
+    section: "fidelizzazione",
+    question: "Spieghi sempre chi sei e qual è il valore unico di seguirti?",
+    options: [
+      { label: "No, do per scontato che le persone lo sappiano", value: 0 },
+      { label: "Ogni tanto lo accenno", value: 30 },
+      { label: "Sì, ho un'intro ricorrente che lo spiega", value: 70 },
+      { label: "Sì, il mio posizionamento è chiaro in ogni video e nella pagina canale", value: 100 },
+    ],
+  },
+
+  // === SEZIONE C: Conversione ===
+  {
+    id: "conv_lead_magnet",
+    section: "conversione",
+    question: "Hai un lead magnet per convertire gli spettatori in contatti?",
+    options: [
+      { label: "Nessuno", value: 0 },
+      { label: "Newsletter", value: 50 },
+      { label: "PDF / Guida scaricabile", value: 60 },
+      { label: "Webinar / Masterclass gratuita", value: 75 },
+      { label: "Quiz, assessment o tool interattivo", value: 100 },
+    ],
+  },
+  {
+    id: "conv_cta",
+    section: "conversione",
+    question: "Inserisci sempre una CTA chiara all'interno dei tuoi video?",
+    options: [
+      { label: "Mai", value: 0 },
+      { label: "Raramente", value: 25 },
+      { label: "A volte", value: 50 },
+      { label: "Sempre, con link in descrizione", value: 100 },
+    ],
+  },
+  {
+    id: "conv_booking",
+    section: "conversione",
+    question: "Dai la possibilità agli spettatori di prenotare una call?",
+    options: [
+      { label: "No", value: 0 },
+      { label: "Solo su richiesta via email/DM", value: 25 },
+      { label: "Sì, ho un link Calendly o simile in descrizione", value: 70 },
+      { label: "Sì, sistema integrato con CRM e automazioni", value: 100 },
+    ],
+  },
+  {
+    id: "conv_email_sequence",
+    section: "conversione",
     question: "Hai una sequenza email automatica per i nuovi lead?",
     options: [
       { label: "No", value: 0 },
@@ -71,88 +162,9 @@ export const quizQuestions: QuizQuestion[] = [
     ],
   },
   {
-    id: "fid_retargeting",
-    section: "fidelizzazione",
-    question: "Fai retargeting sui visitatori del tuo funnel?",
-    options: [
-      { label: "No", value: 0 },
-      { label: "Sì, su Facebook/Instagram", value: 40 },
-      { label: "Sì, su YouTube", value: 60 },
-      { label: "Sì, multi-piattaforma", value: 100 },
-    ],
-  },
-  {
-    id: "fid_community",
-    section: "fidelizzazione",
-    question: "Hai una community o un canale diretto con il tuo pubblico?",
-    options: [
-      { label: "No, solo i video YouTube", value: 0 },
-      { label: "Rispondo ai commenti su YouTube", value: 25 },
-      { label: "Ho un gruppo (Telegram, Facebook, Discord)", value: 65 },
-      { label: "Community attiva + contenuti esclusivi per iscritti", value: 100 },
-    ],
-  },
-  {
-    id: "fid_segmentation",
-    section: "fidelizzazione",
-    question: "Come segmenti i tuoi lead?",
-    options: [
-      { label: "Non li segmento", value: 0 },
-      { label: "Per fonte (YT, social, referral)", value: 33 },
-      { label: "Per interesse/bisogno", value: 66 },
-      { label: "Per stadio del buyer journey", value: 100 },
-    ],
-  },
-
-  // === SEZIONE C: Conversione ===
-  {
-    id: "conv_lead_magnet",
-    section: "conversione",
-    question: "Che tipo di lead magnet offri?",
-    options: [
-      { label: "Nessuno", value: 0 },
-      { label: "PDF / Guide", value: 40 },
-      { label: "Webinar / Masterclass", value: 60 },
-      { label: "Consulenza gratuita", value: 75 },
-      { label: "Quiz, assessment o tool interattivo", value: 100 },
-    ],
-  },
-  {
-    id: "conv_rate",
-    section: "conversione",
-    question: "Qual e' il tuo tasso di conversione lead - call prenotata (stima)?",
-    options: [
-      { label: "Non lo so", value: 0 },
-      { label: "Meno del 10%", value: 25 },
-      { label: "10-25%", value: 50 },
-      { label: "25-50%", value: 75 },
-      { label: "Piu' del 50%", value: 100 },
-    ],
-  },
-  {
-    id: "conv_booking",
-    section: "conversione",
-    question: "Come prenoti le call di vendita?",
-    options: [
-      { label: "Scambio email/WhatsApp manuale", value: 0 },
-      { label: "Calendly o simile", value: 66 },
-      { label: "Sistema integrato nel CRM", value: 100 },
-    ],
-  },
-  {
-    id: "conv_followup",
-    section: "conversione",
-    question: "Fai follow-up via email sui lead che non prenotano?",
-    options: [
-      { label: "No", value: 0 },
-      { label: "Sì, manualmente", value: 50 },
-      { label: "Sì, con automazione email", value: 100 },
-    ],
-  },
-  {
     id: "conv_tracking",
     section: "conversione",
-    question: "Tracki le conversioni da YouTube ai tuoi lead?",
+    question: "Tracci le conversioni che arrivano da YouTube?",
     options: [
       { label: "No", value: 0 },
       { label: "Parzialmente (UTM)", value: 50 },

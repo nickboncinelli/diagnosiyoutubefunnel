@@ -13,6 +13,12 @@ const WEIGHTS = {
   conversione: 0.30,
 };
 
+// --- Backstage YouTube video links for tips ---
+const BACKSTAGE_VIDEOS = {
+  titoli: "https://youtu.be/-fijJzqSds8?si=Awc4O5-4jQwLzTNn",
+  thumbnail: "https://youtu.be/CVUd_0KVJ-s?si=q5-P3pW1EdEgs-8X",
+};
+
 // --- Calculate score per quiz section ---
 
 function calcSectionScore(
@@ -49,7 +55,7 @@ function attrazioneFindings(
   // Engagement
   if (m.engagementRate < 2) {
     findings.push(
-      `Il tuo tasso di engagement (${m.engagementRate}%) e' sotto la media. Questo suggerisce che i tuoi contenuti non stanno colpendo nel segno del tuo pubblico target, oppure che titoli e thumbnail non attirano il click giusto.`
+      `Il tuo tasso di engagement (${m.engagementRate}%) e' sotto la media. Questo suggerisce che i tuoi contenuti non stanno colpendo nel segno del tuo pubblico target, oppure che titoli e copertine non attirano il click giusto.`
     );
   }
 
@@ -79,16 +85,28 @@ function attrazioneFindings(
     `SEO Score del canale: ${m.seo.seoScore}/100. ${m.seo.seoScore >= 70 ? "Buona ottimizzazione SEO." : m.seo.seoScore >= 40 ? "SEO nella media, c'e' margine di miglioramento." : "SEO da migliorare significativamente."}`
   );
 
-  // Quiz-based findings for attraction
-  if ((answers["attr_cta"] ?? 0) <= 25) {
+  // Quiz-based findings
+  if ((answers["attr_valore"] ?? 0) <= 33) {
     findings.push(
-      "Non hai una call-to-action chiara nei tuoi video. Ogni video dovrebbe guidare lo spettatore verso il passo successivo."
+      "I tuoi video non sembrano pensati per chi ti scopre per la prima volta. Ricorda: su YouTube la maggior parte delle views arriva da persone che non ti conoscono ancora."
     );
   }
 
   if ((answers["attr_thumbnails"] ?? 0) <= 30) {
     findings.push(
-      "Le tue thumbnail non sono ottimizzate. Una thumbnail professionale puo' aumentare il CTR del 30-50%."
+      `Le tue copertine non sono ottimizzate. Una copertina professionale e coerente col brand puo' migliorare il CTR del 2-3%, che su YouTube fa un'enorme differenza nel lungo periodo. Guarda questo video per approfondire: ${BACKSTAGE_VIDEOS.thumbnail}`
+    );
+  }
+
+  if ((answers["attr_seo_titles"] ?? 0) <= 33) {
+    findings.push(
+      `I titoli dei tuoi video non sono ottimizzati in ottica SEO. Senza keyword research, i tuoi video non verranno trovati nella ricerca di YouTube. Approfondisci qui: ${BACKSTAGE_VIDEOS.titoli}`
+    );
+  }
+
+  if ((answers["attr_script"] ?? 0) <= 15) {
+    findings.push(
+      "Stai delegando interamente lo script all'AI o improvvisando. Lo script e' il cuore del video: un buon script tiene lo spettatore incollato e lo porta alla CTA. L'AI puo' aiutare, ma la tua voce e la tua esperienza devono guidare il contenuto."
     );
   }
 
@@ -100,10 +118,12 @@ function attrazioneFindings(
 
   const tip =
     m.seo.seoScore < 50
-      ? "Priorita': ottimizza titoli (40-60 caratteri con keyword), descrizioni (150+ caratteri con link e timestamp) e aggiungi 8-15 tag rilevanti per ogni video."
-      : m.publishingFrequency < 4
-        ? "Aumenta la frequenza di pubblicazione ad almeno 1 video a settimana e ottimizza titoli e thumbnail per migliorare il CTR."
-        : "Concentrati sull'ottimizzare la retention dei video (hook nei primi 30 secondi) e sulle CTA per convertire viewer in lead.";
+      ? `Priorita': ottimizza i titoli dei tuoi video con keyword research mirata. Guarda questo video per capire come fare: ${BACKSTAGE_VIDEOS.titoli}`
+      : (answers["attr_thumbnails"] ?? 0) <= 30
+        ? `Priorita': migliora le copertine dei tuoi video. Ecco come: ${BACKSTAGE_VIDEOS.thumbnail}`
+        : m.publishingFrequency < 4
+          ? "Aumenta la frequenza di pubblicazione ad almeno 1 video a settimana. La costanza e' il fattore numero uno per la crescita su YouTube."
+          : "Concentrati sull'ottimizzare la retention dei video (hook nei primi 30 secondi) e sulle CTA per convertire viewer in lead.";
 
   return { findings, tip };
 }
@@ -111,37 +131,48 @@ function attrazioneFindings(
 function fidelizzazioneFindings(answers: QuizAnswers): { findings: string[]; tip: string } {
   const findings: string[] = [];
 
-  if ((answers["fid_email_sequence"] ?? 0) === 0) {
+  if ((answers["fid_correlati"] ?? 0) <= 33) {
     findings.push(
-      "Non hai una sequenza email automatica. I lead che entrano nel tuo funnel ricevono zero touchpoint dopo il primo contatto -- il follow-up manuale non scala."
+      "I tuoi video non seguono una logica tematica. Quando i contenuti sono troppo eterogenei, lo spettatore non ha motivo di guardare altri tuoi video. YouTube premia i canali che creano sessioni di visione lunghe."
     );
   }
-  if ((answers["fid_retargeting"] ?? 0) === 0) {
+
+  if ((answers["fid_linking"] ?? 0) <= 30) {
     findings.push(
-      "Non fai retargeting sulle persone che visitano il tuo funnel. Il retargeting puo' aumentare le conversioni del 30-50% recuperando chi non ha convertito al primo contatto."
+      "Non stai indirizzando gli spettatori da un video all'altro. Schede, schermate finali e riferimenti vocali sono fondamentali per aumentare il watch time del canale e far entrare le persone nel tuo ecosistema."
     );
   }
-  if ((answers["fid_community"] ?? 0) <= 25) {
+
+  if ((answers["fid_editing"] ?? 0) === 0) {
     findings.push(
-      "Non hai una community attiva. Creare un punto di contatto diretto (Telegram, newsletter, gruppo) aumenta la fiducia e accelera il percorso da follower a cliente."
+      "Fai tutto da solo con editing minimo. La qualita' dell'editing influisce direttamente sulla retention: tagli, grafiche e ritmo tengono lo spettatore attento. Valuta di investire in un editor."
     );
   }
-  if ((answers["fid_segmentation"] ?? 0) === 0) {
+
+  if ((answers["fid_descrizioni"] ?? 0) <= 25) {
     findings.push(
-      "Non segmenti i tuoi lead. Senza segmentazione, invii messaggi generici che non risuonano con le esigenze specifiche di ciascun lead."
+      "Le descrizioni dei tuoi video sono vuote o troppo brevi. Le descrizioni sono fondamentali per la SEO di YouTube e per indirizzare gli spettatori verso il tuo funnel (link, CTA, risorse)."
+    );
+  }
+
+  if ((answers["fid_posizionamento"] ?? 0) <= 30) {
+    findings.push(
+      "Non comunichi in modo chiaro chi sei e perche' le persone dovrebbero seguirti. Il posizionamento e' cio' che trasforma uno spettatore casuale in un follower fedele. Rendilo esplicito in ogni video."
     );
   }
 
   if (!findings.length) {
     findings.push(
-      "Il tuo sistema di fidelizzazione e' ben impostato, con email automatiche, community e segmentazione attiva."
+      "Il tuo sistema di fidelizzazione e' ben impostato: contenuti correlati, linking tra video e posizionamento chiaro. Ottimo lavoro!"
     );
   }
 
   const tip =
-    (answers["fid_email_sequence"] ?? 0) === 0
-      ? "Implementa una sequenza email di benvenuto di almeno 5 email che educhi il lead, costruisca fiducia e lo guidi verso la prenotazione di una call."
-      : "Affina la segmentazione dei lead e personalizza le sequenze email in base al comportamento e agli interessi specifici.";
+    (answers["fid_linking"] ?? 0) <= 30
+      ? "Priorita': inizia a collegare i tuoi video tra loro. Aggiungi schede, schermate finali e menziona altri video pertinenti durante il contenuto. Questo aumenta il watch time e la fidelizzazione."
+      : (answers["fid_posizionamento"] ?? 0) <= 30
+        ? "Priorita': definisci e comunica il tuo posizionamento unico. Chi sei, cosa fai e perche' dovrebbero seguire te e non un altro. Inseriscilo nei primi 30 secondi di ogni video."
+        : "Continua cosi'. Per il prossimo step, crea playlist tematiche che guidino lo spettatore in un percorso logico di apprendimento.";
 
   return { findings, tip };
 }
@@ -151,40 +182,46 @@ function conversioneFindings(answers: QuizAnswers): { findings: string[]; tip: s
 
   if ((answers["conv_lead_magnet"] ?? 0) === 0) {
     findings.push(
-      "Non hai un lead magnet collegato al tuo canale YouTube. Stai lasciando sul tavolo una percentuale significativa dei potenziali lead che guardano i tuoi video."
+      "Non hai un lead magnet collegato al tuo canale YouTube. Stai lasciando sul tavolo una percentuale significativa dei potenziali lead che guardano i tuoi video. Una newsletter, una guida PDF o un webinar gratuito possono fare la differenza."
     );
   }
-  if ((answers["conv_rate"] ?? 0) <= 25) {
+
+  if ((answers["conv_cta"] ?? 0) <= 25) {
     findings.push(
-      "Il tuo tasso di conversione da lead a call prenotata e' sotto il 10%. Questo suggerisce un problema nel nurturing o nel processo di prenotazione -- probabilmente stai perdendo lead caldi che non ricevono un follow-up tempestivo."
+      "Non inserisci CTA chiare nei tuoi video. Ogni video dovrebbe guidare lo spettatore verso il passo successivo: iscriversi alla newsletter, scaricare una guida, prenotare una call."
     );
   }
+
   if ((answers["conv_booking"] ?? 0) === 0) {
     findings.push(
-      "Il processo di prenotazione call e' manuale. Ogni frizione in piu' riduce drasticamente il tasso di prenotazione -- un sistema automatizzato puo' fare una grande differenza."
+      "Non dai la possibilita' di prenotare una call direttamente. Se il tuo business si basa su consulenze o servizi, un link di prenotazione in descrizione e' fondamentale per convertire gli spettatori interessati."
     );
   }
-  if ((answers["conv_followup"] ?? 0) === 0) {
+
+  if ((answers["conv_email_sequence"] ?? 0) === 0) {
     findings.push(
-      "Non fai follow-up via email sui lead che non prenotano. Stai lasciando sul tavolo il 40-60% dei potenziali clienti che avevano bisogno solo di un promemoria."
+      "Non hai una sequenza email automatica. I lead che entrano nel tuo funnel ricevono zero touchpoint dopo il primo contatto — il follow-up manuale non scala. Implementa almeno una sequenza di benvenuto di 5 email."
     );
   }
+
   if ((answers["conv_tracking"] ?? 0) === 0) {
     findings.push(
-      "Non tracki le conversioni da YouTube. Senza dati, e' impossibile sapere cosa funziona e cosa ottimizzare."
+      "Non tracci le conversioni da YouTube. Senza dati, e' impossibile sapere cosa funziona e cosa ottimizzare nel tuo funnel."
     );
   }
 
   if (!findings.length) {
     findings.push(
-      "Il tuo processo di conversione e' solido, con lead magnet, prenotazione automatica e follow-up attivo."
+      "Il tuo processo di conversione e' solido: hai un lead magnet, CTA chiare, prenotazione automatica e sequenze email attive."
     );
   }
 
   const tip =
-    (answers["conv_followup"] ?? 0) === 0
-      ? "Implementa un sistema di follow-up automatico (email + reminder) per i lead che non prenotano entro 48 ore dal primo contatto."
-      : "Ottimizza il tuo funnel di conversione testando diverse offerte di lead magnet e monitora i tassi di conversione per ogni fase.";
+    (answers["conv_email_sequence"] ?? 0) === 0
+      ? "Priorita': implementa una sequenza email di benvenuto di almeno 5 email che educhi il lead, costruisca fiducia e lo guidi verso la prenotazione di una call."
+      : (answers["conv_lead_magnet"] ?? 0) === 0
+        ? "Priorita': crea un lead magnet (newsletter, guida PDF, mini-corso) da promuovere nei tuoi video. E' il ponte tra 'spettatore' e 'contatto qualificato'."
+        : "Ottimizza il tuo funnel di conversione testando diverse offerte e monitora i tassi di conversione per ogni fase con UTM e dashboard dedicate.";
 
   return { findings, tip };
 }
@@ -195,7 +232,7 @@ export function calculateFunnelScore(
   youtube: YouTubeAnalysis,
   answers: QuizAnswers
 ): FunnelScore {
-  // Attrazione combines YouTube data + quiz answers for attraction section
+  // Attrazione combines YouTube data + quiz answers
   const attrQuizScore = calcSectionScore("attrazione", answers);
   const attrYTScore = youtube.youtubeScore;
   // Blend: 60% YouTube data, 40% quiz answers
