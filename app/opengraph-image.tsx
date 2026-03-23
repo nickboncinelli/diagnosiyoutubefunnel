@@ -14,99 +14,43 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "sans-serif",
         }}
       >
-        {/* Logo */}
+        {/* Logo container */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "16px",
-            marginBottom: "40px",
+            justifyContent: "center",
+            position: "relative",
           }}
         >
+          {/* Circle */}
           <div
             style={{
-              width: "48px",
-              height: "48px",
+              width: "240px",
+              height: "240px",
               borderRadius: "50%",
-              background: "#333",
+              border: "2px solid rgba(255,255,255,0.3)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
-          >
-            <div
-              style={{
-                width: 0,
-                height: 0,
-                borderLeft: "12px solid transparent",
-                borderRight: "12px solid transparent",
-                borderBottom: "20px solid white",
-              }}
-            />
-          </div>
+          />
+          {/* Red triangle (play button) - overlapping to the right */}
           <div
             style={{
               width: 0,
               height: 0,
-              borderTop: "14px solid transparent",
-              borderBottom: "14px solid transparent",
-              borderLeft: "24px solid #FF0000",
+              borderTop: "100px solid transparent",
+              borderBottom: "100px solid transparent",
+              borderLeft: "170px solid #FF0000",
+              marginLeft: "-60px",
             }}
           />
-          <span
-            style={{
-              fontSize: "36px",
-              fontWeight: 700,
-              color: "#e6e6e6",
-              letterSpacing: "0.05em",
-            }}
-          >
-            backstage
-          </span>
         </div>
-
-        {/* Title */}
-        <h1
-          style={{
-            fontSize: "72px",
-            fontWeight: 800,
-            color: "#FFFFFF",
-            margin: 0,
-            lineHeight: 1.1,
-            textAlign: "center",
-          }}
-        >
-          Diagnosi YouTube
-        </h1>
-
-        {/* Subtitle */}
-        <p
-          style={{
-            fontSize: "28px",
-            color: "#999",
-            marginTop: "20px",
-            textAlign: "center",
-          }}
-        >
-          Scopri quanto vende il tuo funnel YouTube in 3 minuti
-        </p>
-
-        {/* Red accent line */}
-        <div
-          style={{
-            width: "80px",
-            height: "4px",
-            background: "#FF0000",
-            marginTop: "32px",
-            borderRadius: "2px",
-          }}
-        />
       </div>
     ),
     { ...size }
