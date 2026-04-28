@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 
 const GTM_ID = "GTM-TBK762J9";
+const GADS_ID = "AW-18006685293";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -59,6 +60,16 @@ export default function RootLayout({
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','${GTM_ID}');`}
+        </Script>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GADS_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GADS_ID}');`}
         </Script>
       </head>
       <body className="min-h-full flex flex-col" style={{ backgroundColor: "#050505", color: "#e6e6e6" }}>
