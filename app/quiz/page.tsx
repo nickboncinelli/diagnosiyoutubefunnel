@@ -166,19 +166,7 @@ function QuizContent() {
         body: JSON.stringify(result),
       }).catch(console.error);
 
-      // Send lead to GHL CRM in background
-      fetch("/api/ghl/create-contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lead,
-          score: data.score?.totalScore ?? 0,
-          channelName: youtube?.channel?.title ?? "",
-        }),
-      })
-        .then((r) => r.json())
-        .then((d) => console.log("GHL response:", d))
-        .catch((e) => console.error("GHL error:", e));
+      // GHL CRM integration now handled server-side in /api/score/calculate
 
       // Store data in sessionStorage to avoid URL too long (HTTP 431)
       sessionStorage.setItem(`result-${data.id}`, JSON.stringify(result));
