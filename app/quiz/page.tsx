@@ -166,6 +166,17 @@ function QuizContent() {
         body: JSON.stringify(result),
       }).catch(console.error);
 
+      // Send lead to GHL CRM in background
+      fetch("/api/ghl/create-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead,
+          score: data.score.totalScore,
+          channelName: youtube?.channel?.title || "",
+        }),
+      }).catch(console.error);
+
       // Store data in sessionStorage to avoid URL too long (HTTP 431)
       sessionStorage.setItem(`result-${data.id}`, JSON.stringify(result));
 
