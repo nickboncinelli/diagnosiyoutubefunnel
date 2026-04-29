@@ -20,6 +20,24 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
+    // Build payload without customFields (avoids 400 if fields don't exist in location)
+    // Score, ruolo and channel are stored in tags for easy filtering
+    const scoreTag = `score-${totalScore}`;
+    const roleTag = lead.role ? `ruolo-${lead.role.toLowerCase().replace(/\s+/g, "-")}` : null;
+    const tags = ["diagnosi-youtube", scoreTag];
+    if (roleTag) tags.push(roleTag);
+
+    const payload: Record<string, unknown> = {
+      locationId: GHL_LOCATION_ID,
+      firstName,
+      lastName,
+      email: lead.email,
+      source: "Diagnosi YouTube",
+      tags,
+    };
+    if (lead.phone) payload.phone = lead.phone;
+    if (lead.company) payload.companyName = lead.company;
+
     const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
       method: "POST",
       headers: {
@@ -27,25 +45,15 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
         "Content-Type": "application/json",
         Version: "2021-07-28",
       },
-      body: JSON.stringify({
-        locationId: GHL_LOCATION_ID,
-        firstName,
-        lastName,
-        email: lead.email,
-        phone: lead.phone || undefined,
-        companyName: lead.company || undefined,
-        source: "Diagnosi YouTube",
-        tags: ["diagnosi-youtube"],
-        customFields: [
-          { key: "funnel_score", field_value: String(totalScore) },
-          { key: "ruolo", field_value: lead.role || "" },
-          { key: "canale_youtube", field_value: channelName },
-        ],
-      }),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
-    console.log("GHL contact created:", data.contact?.id || data);
+    if (!res.ok) {
+      console.error("GHL API error:", res.status, JSON.stringify(data));
+    } else {
+      console.log("GHL contact created:", data.contact?.id);
+    }
   } catch (error) {
     console.error("GHL error:", error);
   }

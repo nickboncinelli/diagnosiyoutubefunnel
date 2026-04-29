@@ -38,30 +38,21 @@ export async function POST(req: NextRequest) {
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
+    const scoreTag = `score-${score}`;
+    const roleTag = lead.role ? `ruolo-${lead.role.toLowerCase().replace(/\s+/g, "-")}` : null;
+    const tags = ["diagnosi-youtube", scoreTag];
+    if (roleTag) tags.push(roleTag);
+
     const ghlPayload: Record<string, unknown> = {
       locationId: GHL_LOCATION_ID,
       firstName,
       lastName,
       email: lead.email,
-      phone: lead.phone || undefined,
-      companyName: lead.company || undefined,
       source: "Diagnosi YouTube",
-      tags: ["diagnosi-youtube"],
-      customFields: [
-        {
-          key: "funnel_score",
-          field_value: String(score),
-        },
-        {
-          key: "ruolo",
-          field_value: lead.role || "",
-        },
-        {
-          key: "canale_youtube",
-          field_value: channelName || "",
-        },
-      ],
+      tags,
     };
+    if (lead.phone) ghlPayload.phone = lead.phone;
+    if (lead.company) ghlPayload.companyName = lead.company;
 
     const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
       method: "POST",

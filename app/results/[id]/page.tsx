@@ -57,15 +57,7 @@ function ResultsContent() {
   // Fire Google Ads conversion when results load successfully
   useEffect(() => {
     if (!result || typeof window === "undefined") return;
-
-    // Ensure dataLayer and gtag are available (mirrors the init in layout.tsx)
-    window.dataLayer = window.dataLayer || [];
-    if (typeof window.gtag !== "function") {
-      window.gtag = function (...args: unknown[]) {
-        window.dataLayer.push(args);
-      };
-    }
-
+    // gtag is defined synchronously in layout.tsx <head>, so always available
     window.gtag("event", "conversion", {
       send_to: "AW-18006685293/zALxCleC-aMcEO3soIpD",
     });
