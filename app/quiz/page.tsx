@@ -172,10 +172,13 @@ function QuizContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead,
-          score: data.score.totalScore,
-          channelName: youtube?.channel?.title || "",
+          score: data.score?.totalScore ?? 0,
+          channelName: youtube?.channel?.title ?? "",
         }),
-      }).catch(console.error);
+      })
+        .then((r) => r.json())
+        .then((d) => console.log("GHL response:", d))
+        .catch((e) => console.error("GHL error:", e));
 
       // Store data in sessionStorage to avoid URL too long (HTTP 431)
       sessionStorage.setItem(`result-${data.id}`, JSON.stringify(result));
