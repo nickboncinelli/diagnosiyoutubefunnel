@@ -38,6 +38,8 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
     if (lead.phone) payload.phone = lead.phone;
     if (lead.company) payload.companyName = lead.company;
 
+    console.log("GHL request payload:", JSON.stringify(payload));
+
     const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
       method: "POST",
       headers: {
@@ -48,10 +50,12 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
       body: JSON.stringify(payload),
     });
 
-    const data = await res.json();
-    if (!res.ok) {
-      console.error("GHL API error:", res.status, JSON.stringify(data));
-    } else {
+    const rawText = await res.text();
+    console.log("GHL response status:", res.status);
+    console.log("GHL response body:", rawText);
+
+    if (res.ok) {
+      const data = JSON.parse(rawText);
       console.log("GHL contact created:", data.contact?.id);
     }
   } catch (error) {
@@ -89,8 +93,8 @@ export async function POST(req: NextRequest) {
 
     resultsStore.set(id, result);
 
-    // Send lead to GHL CRM (server-side, non-blocking)
-    sendToGHL(lead, score.totalScore, youtube?.channel?.title || "").catch(console.error);
+    // Send lead to GHL CRM (server-side, awaited to avoid Vercel cutting execution)
+    await sendToGHL(lead, score.totalScore, youtube?.channel?.title || "");
 
     return NextResponse.json({ id, score });
   } catch (error) {
