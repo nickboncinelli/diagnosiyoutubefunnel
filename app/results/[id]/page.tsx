@@ -56,19 +56,19 @@ function ResultsContent() {
 
   // Fire Google Ads conversion when results load successfully
   useEffect(() => {
-    if (result && typeof window !== "undefined") {
-      // Use dataLayer.push directly to avoid race condition with gtag.js loading
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push("event", "conversion", {
-        send_to: "AW-18006685293/zALxCleC-aMcEO3soIpD",
-      });
-      // Also try gtag if already available
-      if (typeof window.gtag === "function") {
-        window.gtag("event", "conversion", {
-          send_to: "AW-18006685293/zALxCleC-aMcEO3soIpD",
-        });
-      }
+    if (!result || typeof window === "undefined") return;
+
+    // Ensure dataLayer and gtag are available (mirrors the init in layout.tsx)
+    window.dataLayer = window.dataLayer || [];
+    if (typeof window.gtag !== "function") {
+      window.gtag = function (...args: unknown[]) {
+        window.dataLayer.push(args);
+      };
     }
+
+    window.gtag("event", "conversion", {
+      send_to: "AW-18006685293/zALxCleC-aMcEO3soIpD",
+    });
   }, [result]);
 
   if (loading) {
