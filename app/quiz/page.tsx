@@ -115,7 +115,7 @@ function QuizContent() {
     if (!lead.email.trim()) errors.email = "Email richiesta";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email))
       errors.email = "Email non valida";
-    if (!lead.phone.trim()) errors.phone = "Numero di telefono richiesto";
+    if (!(lead.phone || "").trim()) errors.phone = "Numero di telefono richiesto";
     if (!lead.role) errors.role = "Seleziona un ruolo";
     if (!lead.privacyAccepted) errors.privacy = "Devi accettare la privacy policy";
     setLeadErrors(errors);
