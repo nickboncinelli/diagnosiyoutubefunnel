@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     if (lead.phone) ghlPayload.phone = lead.phone;
     if (lead.company) ghlPayload.companyName = lead.company;
 
-    const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
+    const res = await fetch("https://services.leadconnectorhq.com/contacts/upsert", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${GHL_API_KEY}`,

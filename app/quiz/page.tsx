@@ -115,6 +115,7 @@ function QuizContent() {
     if (!lead.email.trim()) errors.email = "Email richiesta";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email))
       errors.email = "Email non valida";
+    if (!lead.phone.trim()) errors.phone = "Numero di telefono richiesto";
     if (!lead.role) errors.role = "Seleziona un ruolo";
     if (!lead.privacyAccepted) errors.privacy = "Devi accettare la privacy policy";
     setLeadErrors(errors);
@@ -439,16 +440,20 @@ function QuizContent() {
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium mb-1">
-                Telefono <span className="text-gray text-xs">(opzionale)</span>
+                Telefono <span className="text-accent">*</span>
               </label>
               <input
                 id="phone"
                 type="tel"
                 value={lead.phone}
                 onChange={(e) => setLead({ ...lead, phone: e.target.value })}
-                className="w-full px-4 py-3 bg-card border border-border focus:border-accent rounded-xl text-base outline-none transition-colors text-foreground"
+                className={`w-full px-4 py-3 bg-card border ${leadErrors.phone ? "border-danger" : "border-border"} focus:border-accent rounded-xl text-base outline-none transition-colors text-foreground`}
                 placeholder="+39 333 1234567"
+                required
               />
+              {leadErrors.phone && (
+                <p className="text-danger text-xs mt-1">{leadErrors.phone}</p>
+              )}
             </div>
 
             <div>

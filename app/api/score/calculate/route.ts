@@ -20,12 +20,12 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    // Build payload without customFields (avoids 400 if fields don't exist in location)
-    // Score, ruolo and channel are stored in tags for easy filtering
     const scoreTag = `score-${totalScore}`;
     const roleTag = lead.role ? `ruolo-${lead.role.toLowerCase().replace(/\s+/g, "-")}` : null;
+    const channelTag = channelName ? `canale-${channelName.toLowerCase().replace(/\s+/g, "-")}` : null;
     const tags = ["diagnosi-youtube", scoreTag];
     if (roleTag) tags.push(roleTag);
+    if (channelTag) tags.push(channelTag);
 
     const payload: Record<string, unknown> = {
       locationId: GHL_LOCATION_ID,
@@ -38,9 +38,8 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
     if (lead.phone) payload.phone = lead.phone;
     if (lead.company) payload.companyName = lead.company;
 
-    console.log("GHL request payload:", JSON.stringify(payload));
-
-    const res = await fetch("https://services.leadconnectorhq.com/contacts/", {
+    // Use UPSERT endpoint: creates if new, updates if email already exists
+    const res = await fetch("https://services.leadconnectorhq.com/contacts/upsert", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${GHL_API_KEY}`,
@@ -50,13 +49,12 @@ async function sendToGHL(lead: LeadInfo, totalScore: number, channelName: string
       body: JSON.stringify(payload),
     });
 
-    const rawText = await res.text();
-    console.log("GHL response status:", res.status);
-    console.log("GHL response body:", rawText);
-
+    const data = await res.json();
     if (res.ok) {
-      const data = JSON.parse(rawText);
-      console.log("GHL contact created:", data.contact?.id);
+      const isNew = data.new;
+      console.log(`GHL contact ${isNew ? "created" : "updated"}:`, data.contact?.id);
+    } else {
+      console.error("GHL API error:", res.status, JSON.stringify(data));
     }
   } catch (error) {
     console.error("GHL error:", error);
