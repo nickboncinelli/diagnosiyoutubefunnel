@@ -54,6 +54,14 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${inter.variable} ${syne.variable} h-full antialiased`}>
       <head>
+        {/* Cookiebot — must load BEFORE any tracking scripts */}
+        <script
+          id="Cookiebot"
+          src="https://consent.cookiebot.com/uc.js"
+          data-cbid="c53c83cd-529f-4c85-809e-761c0502750c"
+          data-blockingmode="auto"
+          type="text/javascript"
+        />
         {/* Google Tag Manager — all tracking (GA4, Google Ads, conversions) managed via GTM */}
         <Script id="gtm-init" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
