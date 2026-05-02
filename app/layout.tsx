@@ -5,7 +5,6 @@ import Script from "next/script";
 import "./globals.css";
 
 const GTM_ID = "GTM-TBK762J9";
-const GADS_ID = "AW-18006685293";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,17 +54,7 @@ export default function RootLayout({
   return (
     <html lang="it" className={`${inter.variable} ${syne.variable} h-full antialiased`}>
       <head>
-        {/* gtag definition — runs synchronously so gtag() is always available */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GADS_ID}');`,
-          }}
-        />
-        {/* Load gtag.js and GTM async */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GADS_ID}`}
-          strategy="afterInteractive"
-        />
+        {/* Google Tag Manager — all tracking (GA4, Google Ads, conversions) managed via GTM */}
         <Script id="gtm-init" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

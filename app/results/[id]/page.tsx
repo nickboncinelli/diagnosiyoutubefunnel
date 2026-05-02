@@ -54,14 +54,7 @@ function ResultsContent() {
       });
   }, [params.id]);
 
-  // Fire Google Ads conversion when results load successfully
-  useEffect(() => {
-    if (!result || typeof window === "undefined") return;
-    // gtag is defined synchronously in layout.tsx <head>, so always available
-    window.gtag("event", "conversion", {
-      send_to: "AW-18006685293/zALxCleC-aMcEO3soIpD",
-    });
-  }, [result]);
+  // Conversion tracking is now handled via Google Tag Manager (GTM-TBK762J9)
 
   if (loading) {
     return (
